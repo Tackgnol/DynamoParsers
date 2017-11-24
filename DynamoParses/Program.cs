@@ -1,6 +1,10 @@
-﻿using System;
+﻿using ClosedXML.Excel;
+using DynamoParses.Models;
+using DynamoParses.Parsers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,6 +21,8 @@ namespace DynamoParses
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+
         }
+
     }
 }
