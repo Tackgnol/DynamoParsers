@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using DynamoParses.Models;
 using DynamoParses.Parsers;
+using DynamoParses.StoregeUnits;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,6 +9,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,21 +20,27 @@ namespace DynamoParses
         public Form1()
         {
             InitializeComponent();
+            HeaderStorage headers = new HeaderStorage();
+            ParameterStorage parameters = new ParameterStorage();
             string[] lines = System.IO.File.ReadAllLines(@"C:\Users\Adam\Source\Repos\Rozlicznik\DynamoParses\DynamoParses\Resources\Borowiecka M, dynamika, buty 1.txt");
             string gather = "none";
             List<PressureMeasurement> preasures = new List<PressureMeasurement>();
             Pressures parser = new Pressures();
             foreach (var line in lines)
             {
-                label1.Text = line;
-                if (line.Contains("[Left]"))
+                Match match = Regex.Match(line, @"\[([^)]*)\]");
+                if (match.Success)
                 {
-                    gather = "Left";
+                    gather = match.Groups[1].Value;
                 }
-                else if (line.Contains("[Butterfly]"))
-                {
-                    gather = "end";
-                }
+                //if (line.Contains("[Left]"))
+                //{
+                //    gather = "Left";
+                //}
+                //else if (line.Contains("[Butterfly]"))
+                //{
+                //    gather = "end";
+                //}
 
                 switch (gather)
                 {

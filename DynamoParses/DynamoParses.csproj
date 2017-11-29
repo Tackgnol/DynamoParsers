@@ -64,11 +64,15 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\DynamicReading.cs" />
+    <Compile Include="Models\Header.cs" />
+    <Compile Include="Models\Parameter.cs" />
     <Compile Include="Models\PressureMeasurement.cs" />
     <Compile Include="Parsers\Pressures.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StoregeUnits\AbstractStorage.cs" />
+    <Compile Include="StoregeUnits\HeaderStorage.cs" />
+    <Compile Include="StoregeUnits\ParameterStorage.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

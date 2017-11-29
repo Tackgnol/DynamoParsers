@@ -8,6 +8,7 @@ namespace DynamoParses.Models
 {
     class PressureMeasurement
     {
+        public string BodyPart { get; set; }
         public double Force { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
