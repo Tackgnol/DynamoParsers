@@ -1,5 +1,4 @@
-﻿using DynamoParses.StoregeUnits;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,23 +6,21 @@ using System.Threading.Tasks;
 
 namespace DynamoParses.Models
 {
-    public class Parameter 
+    public class ButterflyParameter
     {
         public int ExperimentId { get; set; }
         public int PatientId { get; set; }
         public string Title { get; set; }
         public string Unit { get; set; }
         public string Side { get; set; }
-        public double X { get; set; }
-        public double Y { get; set; }
+        public double Value { get; set; }
 
-        public Parameter(string title, string unit, string side, double x, double y, Header experiment)
+        public ButterflyParameter(string name, string unit,string side, double value, Header experiment)
         {
-            Title = title;
+            Title = name;
             Unit = unit;
+            Value = value;
             Side = side;
-            X = x;
-            Y = y;
             ExperimentId = experiment.Id;
             PatientId = experiment.Person.Id;
         }

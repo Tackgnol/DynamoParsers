@@ -7,47 +7,48 @@ using System.Threading.Tasks;
 
 namespace DynamoParses.StoregeUnits
 {
-    public class ParameterStorage : AbstractStorage
+    class ButterflyParametersStorage : AbstractStorage
     {
-        public ParameterStorage() : base(){ }
+        public ButterflyParametersStorage() : base(){ }
 
-        public List<Parameter> ParseElements(Header experiment)
+        public List<ButterflyParameter> ParseElements(Header experiment)
         {
-
             Dictionary<string, string> parsedStrings = new Dictionary<string, string>();
             string[] array;
-            double X, Y;
-            List<Parameter> paramameters = new List<Parameter>();
+            double value;
+            List<ButterflyParameter> paramameters = new List<ButterflyParameter>();
             foreach (string element in _elements)
             {
                 parsedStrings = _getValueDict(element);
+                if (parsedStrings["Unit"] == "left" || parsedStrings["Unit"] == "right")
+                {
+                    parsedStrings["Side"] = parsedStrings["Unit"];
+                    parsedStrings["Unit"] = "NA";
+                }
                 array = parsedStrings["RemainingValues"].Split('\t');
                 for (int i = 0; i < array.Length; i++)
                 {
                     array[i] = array[i].Replace(',', '.');
                 }
-                X = Convert.ToDouble(array[0]);
-                Y = Convert.ToDouble(array[1]);
+                value = Convert.ToDouble(array[0]);
+
                 paramameters.Add(
-                    new Parameter(
+                    new ButterflyParameter(
                         parsedStrings["Title"],
                         parsedStrings["Unit"],
                         parsedStrings["Side"],
-                        X, Y,
+                        value,
                         experiment
                         ));
             }
             _elements = new List<string>();
             return paramameters;
-
         }
-
         override protected bool _validateLine(string element)
         {
-            string[] array = element.Split(',');
-            if (array.Count() == 4
+            if (element.Split(',').Count() == 2
                 ||
-                array.Count() == 5)
+                element.Split(',').Count() == 3)
             {
                 return true;
             }
@@ -55,32 +56,35 @@ namespace DynamoParses.StoregeUnits
         }
         private Dictionary<string, string> _getValueDict(string input)
         {
-            bool hasSide; 
+            bool hasSide;
             List<string> array = input.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            if (array.Count()>4)
+            if (array.Count() > 2)
             {
                 hasSide = true;
-            } else {
+            }
+            else
+            {
                 hasSide = false;
             }
             Dictionary<string, string> parameterValues = new Dictionary<string, string>();
-            parameterValues["Title"] = array[0];
+            parameterValues["Title"] = array[0].Trim();
             array.RemoveAt(0);
             if (hasSide)
             {
-                parameterValues["Unit"] = array[0];
+                parameterValues["Unit"] = array[0].Trim();
                 array.RemoveAt(0);
-                parameterValues["Side"] = array[0].Split('\t')[0];
-                array[0] = array[0].Split('\t')[1];
-            } else {
+                parameterValues["Side"] = array[0].Split('\t')[0].Trim();
+                array[0] = array[0].Split('\t')[1].Trim();
+            }
+            else
+            {
                 parameterValues["Side"] = "NA";
-                parameterValues["Unit"] = array[0].Split('\t')[0];
-                array[0] = array[0].Split('\t')[1];
+                parameterValues["Unit"] = array[0].Split('\t')[0].Trim();
+                array[0] = array[0].Split('\t')[1].Trim();
             }
             parameterValues["RemainingValues"] = string.Join(",", array);
 
             return parameterValues;
         }
-
     }
 }

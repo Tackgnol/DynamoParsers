@@ -240,3 +240,7 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/DynamoParses/Resources/Borowiecka M, dynamika, b2.txt
+/DynamoParses/Resources/Borowiecka M, dynamika, bb 1.txt
+/DynamoParses/Resources/Borowiecka M, dynamika, bb 2.txt
+/DynamoParses/Resources/Borowiecka M, statyka, oo, b 1.txt

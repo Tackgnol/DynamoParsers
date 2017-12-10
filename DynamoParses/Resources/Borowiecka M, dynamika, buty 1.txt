@@ -13,7 +13,7 @@ configuration
 [Maximum]
 
 [Parameters]
-Foot rotation, deg, left	4,73209	1,12741
+Foot rotation, deg, left	4,73209	1,1274
 Foot rotation, deg, right	8,35614	1,00885
 Step width, cm	9,80225	1,42621
 Step length, cm, left	59,9926	1,43079
@@ -38,7 +38,7 @@ Velocity, km/h	3,89222	0,0506881
 
 [Patient Comments]
 Text	{
-
+	
 }
 
 [Butterfly Parameters]
@@ -9326,6 +9326,7 @@ Toe off at	% from gait cycle	65
 []
 left force = {
 Record: 11-10-2017 Gait Analysis chod buty 1 , Signal: left force = {
+
 Time, %	 Value, 	 SD, 
 0 	8,30881 	9,06646 
 1 	61,408 	24,2105 

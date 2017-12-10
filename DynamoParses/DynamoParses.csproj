@@ -64,15 +64,26 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\ButterflyParameter.cs" />
+    <Compile Include="Models\ContactTime.cs" />
+    <Compile Include="Models\ForceOverlay.cs" />
     <Compile Include="Models\Header.cs" />
+    <Compile Include="Models\OtherPreassureMeasurement.cs" />
     <Compile Include="Models\Parameter.cs" />
+    <Compile Include="Models\Patient.cs" />
     <Compile Include="Models\PressureMeasurement.cs" />
-    <Compile Include="Parsers\Pressures.cs" />
+    <Compile Include="Persistence\Export.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StoregeUnits\AbstractStorage.cs" />
+    <Compile Include="StoregeUnits\ButterflyParametersStorage.cs" />
+    <Compile Include="StoregeUnits\ContactTimeStorage.cs" />
+    <Compile Include="StoregeUnits\ForceOverlayStorage.cs" />
     <Compile Include="StoregeUnits\HeaderStorage.cs" />
+    <Compile Include="StoregeUnits\OtherPreasureStorage.cs" />
     <Compile Include="StoregeUnits\ParameterStorage.cs" />
+    <Compile Include="StoregeUnits\PatientStorage.cs" />
+    <Compile Include="StoregeUnits\PreassureMeasurementStorage.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -100,7 +111,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Borowiecka M, dynamika, b2.txt" />
+    <Content Include="Resources\Borowiecka M, dynamika, bb 1.txt" />
+    <Content Include="Resources\Borowiecka M, dynamika, bb 2.txt" />
     <Content Include="Resources\Borowiecka M, dynamika, buty 1.txt" />
+    <Content Include="Resources\Borowiecka M, statyka, oo, b 1.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

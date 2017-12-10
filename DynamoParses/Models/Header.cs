@@ -8,16 +8,24 @@ namespace DynamoParses.Models
 {
     public class Header
     {
-        public string Firstname { get; set; }
-        public string Lastname { get; set; }
-        public DateTime Date { get; set; }
-        public string Sex { get; set; }
-        public Header(string firstName,string lastName, string date, string sex)
+        private static int m_Counter = 0;
+        public int Id { get; set; }
+        public Patient Person {get; set;}
+        public int PersonId
         {
-            Firstname = firstName;
-            Lastname = lastName;
-            Date = DateTime.ParseExact(date, "dd/mm/yyyy", System.Globalization.CultureInfo.InvariantCulture);
-            Sex = sex;
+            get
+            {
+                return Person.Id;
+            }
+        }
+        public DateTime Date { get; set; }
+        public string Title { get; set; } 
+        public Header(Patient person, DateTime date, string title)
+        {
+            Id = System.Threading.Interlocked.Increment(ref m_Counter);
+            Person = person;
+            Date = date;
+            Title = title;
         }
     }
 

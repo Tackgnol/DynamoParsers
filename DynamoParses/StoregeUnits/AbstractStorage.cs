@@ -18,7 +18,13 @@ namespace DynamoParses.StoregeUnits
 
         public void AddElement(string element)
         {
-            _elements.Add(element);
+            if (_validateLine(element))
+                _elements.Add(element);
+        }
+
+        protected virtual bool _validateLine(string element)
+        {
+            return true;
         }
     }
 }
