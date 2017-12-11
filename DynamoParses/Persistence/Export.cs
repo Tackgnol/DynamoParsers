@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DynamoParses.Persistence
 {
-    class Export
+    public class Export
     {
         private XLWorkbook wb;
         public Export()
@@ -30,12 +30,5 @@ namespace DynamoParses.Persistence
         {
             wb.SaveAs(directory);
         }
-        //var ws = wb.Worksheets.Add("Data_Test_Worksheet");
-        //ws.Cell(1, 1).Value = "Force (N)";
-        //    ws.Cell(1, 2).Value = "X (mm)";
-        //    ws.Cell(1, 3).Value = "Y (mm)";
-        //    ws.Cell(2, 1).InsertData(preasures);
-
-        //wb.SaveAs(@"c:\temp\Data_Test.xlsx");
     }
 }

@@ -10,6 +10,7 @@ namespace DynamoParses.StoregeUnits
     public class AbstractStorage
     {
         protected List<string> _elements;
+        public string AdditionalInfo { get; set; }
 
         protected AbstractStorage()
         {
