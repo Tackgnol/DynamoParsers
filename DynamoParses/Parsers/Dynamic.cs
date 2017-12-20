@@ -3,6 +3,7 @@ using DynamoParses.Persistence;
 using DynamoParses.StoregeUnits;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,61 +11,77 @@ using System.Threading.Tasks;
 
 namespace DynamoParses.Parsers
 {
-    public static class Dynamic
+    public class Dynamic
     {
-        static ParameterStorage parameters = new ParameterStorage();
-        static ButterflyParametersStorage butterflyParameters = new ButterflyParametersStorage();
-        static OtherPreasureStorage otherPressures = new OtherPreasureStorage();
-        static ContactTimeStorage contactTimes = new ContactTimeStorage();
-        static PreassureMeasurementStorage preassureMeasurements = new PreassureMeasurementStorage();
-        static ForceOverlayStorage forceOverlays = new ForceOverlayStorage();
-        static AbstractStorage currentStorage = null;
-        static HeaderStorage headers = new HeaderStorage();
-        static List<PressureMeasurement> parsedPreassures = new List<PressureMeasurement>();
-        static List<Parameter> parsedParameters = new List<Parameter>();
-        static List<OtherPreassureMeasurement> parsedOtherPressures = new List<OtherPreassureMeasurement>();
-        static List<ButterflyParameter> parsedButterflyParameters = new List<ButterflyParameter>();
-        static List<ForceOverlay> parsedForceOverlays = new List<ForceOverlay>();
-        static List<string> overlayCriteria = new List<string>(
-            new string[] {
+        private static Dynamic instance;
+
+        private Dynamic() { }
+
+        public static Dynamic Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Dynamic();
+                }
+                return instance;
+            }
+        }
+        private ParameterStorage parameters = new ParameterStorage();
+        private ButterflyParametersStorage butterflyParameters = new ButterflyParametersStorage();
+        private OtherPreasureStorage otherPressures = new OtherPreasureStorage();
+        private ContactTimeStorage contactTimes = new ContactTimeStorage();
+        private PreassureMeasurementStorage preassureMeasurements = new PreassureMeasurementStorage();
+        private ForceOverlayStorage forceOverlays = new ForceOverlayStorage();
+        private AbstractStorage currentStorage = null;
+        private HeaderStorage headers = new HeaderStorage();
+        public List<PressureMeasurement> parsedPreassures = new List<PressureMeasurement>();
+        public List<DynamicParameter> parsedParameters = new List<DynamicParameter>();
+        public List<OtherPreassureMeasurement> parsedOtherPressures = new List<OtherPreassureMeasurement>();
+        public List<ButterflyParameter> parsedButterflyParameters = new List<ButterflyParameter>();
+        public List<ForceOverlay> parsedForceOverlays = new List<ForceOverlay>();
+        private List<string> overlayCriteria = new List<string>(
+                new string[] {
                     "heel",
                     "forefoot",
                     "midfoot",
                     "total"
-            });
-        static string foot = "";
-        static string type = "";
-        static string measure = "";
+                }
+            );
+        private string foot = "";
+        private string type = "";
+        private string measure = "";
 
-
-        public static void ParseFiles(List<string> directories, ref PatientStorage patients, ref List<Header> parsedHeaders, ref Export export)
+        public void ParseFiles(List<string> directories, ref PatientStorage patients, ref List<Header> parsedHeaders)
         {
 
 
-            foreach (var file in directories)
+            foreach (string file in directories)
             {
-
-                string[] lines = System.IO.File.ReadAllLines(file);
-
-                string mainFlag = "none";
-
-                foreach (var line in lines)
+                using (var stream = File.OpenRead(file))
+                using (var reader = new StreamReader(stream))
                 {
-                    Match match = Regex.Match(line, @"\[([^)]*)\]");
-                    if (match.Success)
+                    string line;
+                    string mainFlag = "none";
+                    while ((line = reader.ReadLine()) != null)
                     {
-                        mainFlag = match.Groups[1].Value;
-                        continue;
+                        Match match = Regex.Match(line, @"\[([^)]*)\]");
+                        if (match.Success)
+                        {
+                            mainFlag = match.Groups[1].Value;
+                            continue;
 
+                        }
+                        currentStorage = _setupStorage(mainFlag, line);
+
+                        if (currentStorage != null)
+                        {
+                            currentStorage.AddElement(currentStorage.AdditionalInfo + line);
+                        }
                     }
-                    currentStorage = _setupStorage(mainFlag, line);
-
-                    if (currentStorage != null)
-                    {
-                        currentStorage.AddElement(currentStorage.AdditionalInfo + line);
-                    }
-
                 }
+
                 Header currentExperiment = headers.ParseElements(patients);
                 parsedHeaders.Add(currentExperiment);
                 parsedPreassures.AddRange(preassureMeasurements.ParseElements(currentExperiment));
@@ -72,16 +89,25 @@ namespace DynamoParses.Parsers
                 parsedButterflyParameters.AddRange(butterflyParameters.ParseElements(currentExperiment));
                 parsedOtherPressures.AddRange(otherPressures.ParseElements(currentExperiment));
                 parsedForceOverlays.AddRange(forceOverlays.ParseElements(currentExperiment));
-            }
-           
-            export.DumpValues<PressureMeasurement>("Preassures", parsedPreassures);
-            export.DumpValues<Parameter>("Parameters", parsedParameters);
-            export.DumpValues<ButterflyParameter>("ButterflyParameters", parsedButterflyParameters);
-            export.DumpValues<OtherPreassureMeasurement>("OtherPreassures", parsedOtherPressures);
-            export.DumpValues<ForceOverlay>("ForceOverlays", parsedForceOverlays);
+                //Export export = new Export(@"c:\temp\Data_Test_Final.xlsx");
+                //export.DumpValues("Preassures", parsedPreassures);
+                //export.DumpValues("DynamicParameters", parsedParameters);
+                //export.DumpValues("ButterflyParameters", parsedButterflyParameters);
+                //export.DumpValues("OtherPreassures", parsedOtherPressures);
+                //export.DumpValues("ForceOverlays", parsedForceOverlays);
+                //parsedPreassures.Clear();
+                //parsedParameters.Clear();
+                //parsedButterflyParameters.Clear();
+                //parsedOtherPressures.Clear();
+                //parsedForceOverlays.Clear();
+                //export.Save();
+                //export.Close();
+                //export = null;
 
+            }
         }
-        private static string _forceOverlayInfo(string foot, List<string> cryteriaList, string line, string oldValue)
+
+        private string _forceOverlayInfo(string foot, List<string> cryteriaList, string line, string oldValue)
         {
             foreach (var item in cryteriaList)
             {
@@ -92,7 +118,7 @@ namespace DynamoParses.Parsers
             }
             return oldValue;
         }
-        private static AbstractStorage _setupStorage(string mainFlag, string line)
+        private AbstractStorage _setupStorage(string mainFlag, string line)
         {
 
             switch (mainFlag)

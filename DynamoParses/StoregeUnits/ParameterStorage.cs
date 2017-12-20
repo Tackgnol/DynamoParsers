@@ -11,13 +11,13 @@ namespace DynamoParses.StoregeUnits
     {
         public ParameterStorage() : base(){ }
 
-        public List<Parameter> ParseElements(Header experiment)
+        public List<DynamicParameter> ParseElements(Header experiment)
         {
 
             Dictionary<string, string> parsedStrings = new Dictionary<string, string>();
             string[] array;
             double X, Y;
-            List<Parameter> paramameters = new List<Parameter>();
+            List<DynamicParameter> paramameters = new List<DynamicParameter>();
             foreach (string element in _elements)
             {
                 parsedStrings = _getValueDict(element);
@@ -29,7 +29,7 @@ namespace DynamoParses.StoregeUnits
                 X = Convert.ToDouble(array[0]);
                 Y = Convert.ToDouble(array[1]);
                 paramameters.Add(
-                    new Parameter(
+                    new DynamicParameter(
                         parsedStrings["Title"],
                         parsedStrings["Unit"],
                         parsedStrings["Side"],

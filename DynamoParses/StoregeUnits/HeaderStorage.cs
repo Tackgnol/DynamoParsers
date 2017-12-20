@@ -35,7 +35,7 @@ namespace DynamoParses.StoregeUnits
                            select header;
             expirementDate = DateTime.ParseExact(
                 dateLine.First().ToString().Split('\t', ' ')[1],
-                "M/d/yyyy",
+                "d/M/yyyy",
                 CultureInfo.InvariantCulture
                 );
             var patientLine = from header in _elements

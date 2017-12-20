@@ -12,16 +12,31 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>1</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,12 +48,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClosedXML, Version=0.90.0.0, Culture=neutral, PublicKeyToken=fd1eb21b62ae805b, processorArchitecture=MSIL">
-      <HintPath>..\packages\ClosedXML.0.90.0\lib\net452\ClosedXML.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.7.2.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
       <HintPath>..\packages\DocumentFormat.OpenXml.2.7.2\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EPPlus, Version=4.1.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.1.1\lib\net40\EPPlus.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FastMember.Signed, Version=1.0.0.9, Culture=neutral, PublicKeyToken=9e8f22703bef9a29, processorArchitecture=MSIL">
@@ -66,12 +81,17 @@
     </Compile>
     <Compile Include="Models\ButterflyParameter.cs" />
     <Compile Include="Models\ContactTime.cs" />
+    <Compile Include="Models\COPAveraged.cs" />
+    <Compile Include="Models\COPTrack.cs" />
+    <Compile Include="Models\DynamicParameter.cs" />
     <Compile Include="Models\ForceOverlay.cs" />
     <Compile Include="Models\Header.cs" />
     <Compile Include="Models\OtherPreassureMeasurement.cs" />
-    <Compile Include="Models\Parameter.cs" />
+    <Compile Include="Models\StaticParameter.cs" />
     <Compile Include="Models\Patient.cs" />
     <Compile Include="Models\PressureMeasurement.cs" />
+    <Compile Include="Models\SideForce.cs" />
+    <Compile Include="Parsers\Static.cs" />
     <Compile Include="Parsers\Dynamic.cs" />
     <Compile Include="Persistence\Export.cs" />
     <Compile Include="Program.cs" />
@@ -79,12 +99,18 @@
     <Compile Include="StoregeUnits\AbstractStorage.cs" />
     <Compile Include="StoregeUnits\ButterflyParametersStorage.cs" />
     <Compile Include="StoregeUnits\ContactTimeStorage.cs" />
+    <Compile Include="StoregeUnits\COPAveragedStorage.cs" />
+    <Compile Include="StoregeUnits\COPTrackStorage.cs" />
     <Compile Include="StoregeUnits\ForceOverlayStorage.cs" />
     <Compile Include="StoregeUnits\HeaderStorage.cs" />
     <Compile Include="StoregeUnits\OtherPreasureStorage.cs" />
     <Compile Include="StoregeUnits\ParameterStorage.cs" />
     <Compile Include="StoregeUnits\PatientStorage.cs" />
     <Compile Include="StoregeUnits\PreassureMeasurementStorage.cs" />
+    <Compile Include="StoregeUnits\SideForceStorage.cs" />
+    <Compile Include="StoregeUnits\StaticParameterStorage.cs" />
+    <Compile Include="UI\UIExtensions\ListViewExtender.cs" />
+    <Compile Include="UI\ViewModels\File.cs" />
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
@@ -117,6 +143,38 @@
     <Content Include="Resources\Borowiecka M, dynamika, bb 2.txt" />
     <Content Include="Resources\Borowiecka M, dynamika, buty 1.txt" />
     <Content Include="Resources\Borowiecka M, statyka, oo, b 1.txt" />
+    <Content Include="Resources\Borowiecka M, statyka, oo, b 2.txt" />
+    <Content Include="Resources\Borowiecka M, statyka, oo, bb 1.txt" />
+    <Content Include="Resources\Borowiecka M, statyka, oo, bb 2.txt" />
+    <Content Include="Resources\Borowiecka M, statyka, oz, b 1.txt" />
+    <Content Include="Resources\Borowiecka M, statyka, oz, b2.txt" />
+    <Content Include="Resources\Borowiecka M, statyka, oz, bb 1.txt" />
+    <Content Include="Resources\Borowiecka M, statyka, oz, bb 2.txt" />
+    <Content Include="Resources\Dziwulska Daria statyka, oo, b 2.txt" />
+    <Content Include="Resources\Dziwulska Daria, chod, b 1.txt" />
+    <Content Include="Resources\Dziwulska Daria, chod, bb 1.txt" />
+    <Content Include="Resources\Dziwulska Daria, chod, bb 2.txt" />
+    <Content Include="Resources\Dziwulska Daria, chod, buty 2.txt" />
+    <Content Include="Resources\Dziwulska Daria, statyka oo,bb 1.txt" />
+    <Content Include="Resources\Dziwulska Daria, statyka, oo, b 1.txt" />
+    <Content Include="Resources\Dziwulska Daria, statyka, oo, bb 2.txt" />
+    <Content Include="Resources\Dziwulska Daria, statyka, oz, b 1.txt" />
+    <Content Include="Resources\Dziwulska Daria, statyka, oz, b 2.txt" />
+    <Content Include="Resources\Dziwulska Daria, statyka, oz, bb1.txt" />
+    <Content Include="Resources\Dziwulska Daria, statyka, oz, bb2.txt" />
+    <Content Include="Resources\Dziwulska Daria, statyka,oo, bb 1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

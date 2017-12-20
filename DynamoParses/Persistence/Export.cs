@@ -1,34 +1,68 @@
-﻿using ClosedXML.Excel;
-using DynamoParses.Models;
-using System;
+﻿
+using OfficeOpenXml;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamoParses.Persistence
 {
     public class Export
     {
-        private XLWorkbook wb;
-        public Export()
+        private ExcelPackage xlPackage;
+        private FileInfo newFile;
+        public Export(string file)
         {
-            wb = new XLWorkbook();
+            newFile = new FileInfo(file);
+            xlPackage = new ExcelPackage(newFile);
+
         }
         public void DumpValues<T>(string sheetName, List<T> valueList)
         {
+
+            var currWorksheet = xlPackage.Workbook.Worksheets[sheetName];
+            int nextValue = currWorksheet.Dimension.End.Row + 1;
+            try
+            {
+                currWorksheet.Cells[nextValue, 1].LoadFromCollection(valueList, false);
+            }
+            catch
+            {
+                Main form = new Main();
+                form.AddToLog("Failed to Export to Excel max rows exceeded");
+
+            }
+        }
+        public void CreateStucture<T>(string sheetName, T type)
+        {
             List<string> propertyList = typeof(T).GetProperties().Select(f => f.Name).ToList();
-            var newWS = wb.Worksheets.Add(sheetName);
+            var currWorksheet = xlPackage.Workbook.Worksheets.Add(sheetName);
             for (int i = 0; i < propertyList.Count(); i++)
             {
-                newWS.Cell(1, i+1).Value = propertyList[i];
+                currWorksheet.Cells[1, i].Value = propertyList[i];
             }
-            newWS.Cell(2, 1).InsertData(valueList);
         }
-        public void Save(string directory)
+        public void Save()
         {
-            wb.SaveAs(directory);
+            xlPackage.Save();
+        }
+
+        public void Close()
+        {
+            xlPackage.Dispose();
+        }
+        private bool _worksheetExist(string name)
+        {
+            bool isThere = true;
+            try
+            {
+                var sheet = xlPackage.Workbook.Worksheets[name];
+            }
+            catch (System.NullReferenceException e)
+            {
+                isThere = false;
+            }
+            return isThere;
         }
     }
 }
