@@ -138,33 +138,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Borowiecka M, dynamika, b2.txt" />
-    <Content Include="Resources\Borowiecka M, dynamika, bb 1.txt" />
-    <Content Include="Resources\Borowiecka M, dynamika, bb 2.txt" />
-    <Content Include="Resources\Borowiecka M, dynamika, buty 1.txt" />
-    <Content Include="Resources\Borowiecka M, statyka, oo, b 1.txt" />
-    <Content Include="Resources\Borowiecka M, statyka, oo, b 2.txt" />
-    <Content Include="Resources\Borowiecka M, statyka, oo, bb 1.txt" />
-    <Content Include="Resources\Borowiecka M, statyka, oo, bb 2.txt" />
-    <Content Include="Resources\Borowiecka M, statyka, oz, b 1.txt" />
-    <Content Include="Resources\Borowiecka M, statyka, oz, b2.txt" />
-    <Content Include="Resources\Borowiecka M, statyka, oz, bb 1.txt" />
-    <Content Include="Resources\Borowiecka M, statyka, oz, bb 2.txt" />
-    <Content Include="Resources\Dziwulska Daria statyka, oo, b 2.txt" />
-    <Content Include="Resources\Dziwulska Daria, chod, b 1.txt" />
-    <Content Include="Resources\Dziwulska Daria, chod, bb 1.txt" />
-    <Content Include="Resources\Dziwulska Daria, chod, bb 2.txt" />
-    <Content Include="Resources\Dziwulska Daria, chod, buty 2.txt" />
-    <Content Include="Resources\Dziwulska Daria, statyka oo,bb 1.txt" />
-    <Content Include="Resources\Dziwulska Daria, statyka, oo, b 1.txt" />
-    <Content Include="Resources\Dziwulska Daria, statyka, oo, bb 2.txt" />
-    <Content Include="Resources\Dziwulska Daria, statyka, oz, b 1.txt" />
-    <Content Include="Resources\Dziwulska Daria, statyka, oz, b 2.txt" />
-    <Content Include="Resources\Dziwulska Daria, statyka, oz, bb1.txt" />
-    <Content Include="Resources\Dziwulska Daria, statyka, oz, bb2.txt" />
-    <Content Include="Resources\Dziwulska Daria, statyka,oo, bb 1.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
@@ -175,6 +148,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
