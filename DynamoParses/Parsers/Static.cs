@@ -13,20 +13,9 @@ namespace DynamoParses.Parsers
 {
     public class Static
     {
-        private static Static instance;
-
-        private Static() { }
-
-        public static Static Instance
+        public Static()
         {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new Static();
-                }
-                return instance;
-            }
+
         }
         private AbstractStorage currentStorage = null;
         private HeaderStorage headers = new HeaderStorage();
@@ -35,67 +24,62 @@ namespace DynamoParses.Parsers
         private SideForceStorage sideForces = new SideForceStorage();
         private StaticParameterStorage parameters = new StaticParameterStorage();
 
-        public List<COPAveraged> parsedCOPAvereges = new List<COPAveraged>();
-        public List<COPTrack> parsedCOPTracks = new List<COPTrack>();
-        public List<SideForce> parsedSideForces = new List<SideForce>();
-        public List<StaticParameter> parsedParameters = new List<StaticParameter>();
-
-        public void ParseFiles(List<string> directories, ref PatientStorage patients, ref List<Header> parsedHeaders)
+        public void ParseFiles(string file, ref PatientStorage patients, ref List<Header> parsedHeaders, ref Export export, Dictionary<string, bool> launch)
         {
 
 
-            foreach (var file in directories)
+            using (var stream = File.OpenRead(file))
+            using (var reader = new StreamReader(stream))
             {
-
-                using (var stream = File.OpenRead(file))
-                using (var reader = new StreamReader(stream))
+                string line;
+                string mainFlag = "none";
+                while ((line = reader.ReadLine()) != null)
                 {
-                    string line;
-                    string mainFlag = "none";
-                    while ((line = reader.ReadLine()) != null)
+                    Match match = Regex.Match(line, @"\[([^)]*)\]");
+                    if (match.Success)
                     {
-                        Match match = Regex.Match(line, @"\[([^)]*)\]");
-                        if (match.Success)
-                        {
-                            mainFlag = match.Groups[1].Value;
-                            continue;
-
-                        }
-                        currentStorage = _setupStorage(mainFlag, line);
-
-                        if (currentStorage != null)
-                        {
-                            currentStorage.AddElement(currentStorage.AdditionalInfo + line);
-                        }
+                        mainFlag = match.Groups[1].Value;
+                        continue;
 
                     }
+                    currentStorage = _setupStorage(mainFlag, line);
 
-                    Header currentExperiment = headers.ParseElements(patients);
-                    Export export = new Export(@"c:\temp\Data_Test_Final.xlsx");
-                    parsedCOPAvereges.AddRange(COPAverages.ParseElements(currentExperiment));
-                    parsedCOPTracks.AddRange(COPTracks.ParseElements(currentExperiment));
-                    parsedSideForces.AddRange(sideForces.ParseElements(currentExperiment));
-                    parsedParameters.AddRange(parameters.ParseElements(currentExperiment));
-                    parsedHeaders.Add(currentExperiment);
-                    //export.DumpValues("COPAverages", parsedCOPAvereges);
-                    //export.DumpValues("COPTracks", parsedCOPTracks);
-                    //export.DumpValues("SideForces", parsedSideForces);
-                    //export.DumpValues("StaticParameters", parsedParameters);
-                    //parsedCOPAvereges.Clear();
-                    //parsedCOPTracks.Clear();
-                    //parsedSideForces.Clear();
-                    //parsedParameters.Clear();
-                    //export.Save();
-                    //export.Close();
-                    //export = null;
+                    if (currentStorage != null)
+                    {
+                        currentStorage.AddElement(currentStorage.AdditionalInfo + line);
+                    }
 
                 }
 
+                Header currentExperiment = headers.ParseElements(patients);
 
+
+                parsedHeaders.Add(currentExperiment);
+                if (launch["COP Averages"])
+                {
+                    export.DumpValues("COPAverages", COPAverages.ParseElements(currentExperiment));
+                }
+                if (launch["COP Tracks"])
+                {
+                    export.DumpValues("COPTracks", COPTracks.ParseElements(currentExperiment));
+                }
+                if (launch["Side Forces"])
+                {
+                    export.DumpValues("SideForces", sideForces.ParseElements(currentExperiment));
+                }
+                if (launch["Parameters"])
+                {
+                    export.DumpValues("StaticParameters", parameters.ParseElements(currentExperiment));
+                }
 
 
             }
+
+
+
+
         }
+        //}
         private AbstractStorage _setupStorage(string mainFlag, string line)
         {
 

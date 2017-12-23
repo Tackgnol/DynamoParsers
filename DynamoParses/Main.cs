@@ -6,6 +6,7 @@ using DynamoParses.UI.UIExtensions;
 using DynamoParses.UI.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -24,6 +25,8 @@ namespace DynamoParses
         {
             //ToDo: Parametry w kolumnach w Excelu
             InitializeComponent();
+            fileProcessor.WorkerReportsProgress = true;
+            fileProcessor.WorkerSupportsCancellation = true;
             fileList.FullRowSelect = true;
             ListViewExtender extender = new ListViewExtender(fileList);
             ListViewButtonColumn buttonDelete = new ListViewButtonColumn(0);
@@ -31,13 +34,9 @@ namespace DynamoParses
             buttonDelete.FixedWidth = true;
             extender.AddColumn(buttonDelete);
             errorList = new List<string>();
+            saveTo.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\" + DateTime.Today.ToString("D") + " Export.xlsx";
         }
 
-        public void AddToLog(string message)
-        {
-            ListViewItem item = new ListViewItem(new[] { message });
-            ExportErrorLog.Items.Add(item);
-        }
 
         private void OnButtonDeleteClick(object sender, ListViewColumnMouseEventArgs e)
         {
@@ -87,44 +86,20 @@ namespace DynamoParses
 
         private void toExcel_Click(object sender, EventArgs e)
         {
-            PatientStorage patients = new PatientStorage();
-            List<Header> parsedHeaders = new List<Header>();
+            if (fileProcessor.IsBusy != true)
+            {
+                cancelWorker.Visible = true;
+                fileProgressBar.Visible = true;
+                UIParameters parameters = new UIParameters();
+                parameters.groupBoxStatic = groupBoxStatic;
+                parameters.groupBoxDynamic = groupBoxDynamic;
+                parameters.groupBoxCommon = groupBoxCommon;
+                parameters.fileList = fileList.Items.Cast<ListViewItem>().ToList();
+                parameters.ExportDir = saveTo.Text;
+                parameters.TemplateDir = templateDirectory.Text;
 
-
-            IEnumerable<string> dynamicDirectories = new List<string>();
-            IEnumerable<string> staticDirectories = new List<string>();
-            var lv = fileList.Items.Cast<ListViewItem>().ToList();
-
-
-            dynamicDirectories = from file in lv
-                                 where file.SubItems[2].Text == "Dynamic"
-                                 select file.SubItems[1].Text;
-
-            staticDirectories = from file in lv
-                                where file.SubItems[2].Text == "Static"
-                                select file.SubItems[1].Text;
-
-
-            Dynamic dynamicParser = Dynamic.Instance;
-            Static staticParser = Static.Instance;
-
-            staticParser.ParseFiles(staticDirectories.ToList(), ref patients, ref parsedHeaders);
-            dynamicParser.ParseFiles(dynamicDirectories.ToList(), ref patients, ref parsedHeaders);
-            Export export = new Export(@"c:\temp\Data_Test_Final.xlsx");
-            export.DumpValues<Patient>("Patients", patients.AllPatients);
-            export.DumpValues<Header>("Experiments", parsedHeaders);
-            export.DumpValues("COPAverages", staticParser.parsedCOPAvereges);
-            export.DumpValues("COPTracks", staticParser.parsedCOPTracks);
-            export.DumpValues("SideForces", staticParser.parsedSideForces);
-            export.DumpValues("StaticParameters", staticParser.parsedParameters);
-            export.DumpValues("Preassures", dynamicParser.parsedPreassures);
-            export.DumpValues("DynamicParameters", dynamicParser.parsedParameters);
-            export.DumpValues("ButterflyParameters", dynamicParser.parsedButterflyParameters);
-            export.DumpValues("OtherPreassures", dynamicParser.parsedOtherPressures);
-            export.DumpValues("ForceOverlays", dynamicParser.parsedForceOverlays);
-            export.Save();
-            export.Close();
-            export = null;
+                fileProcessor.RunWorkerAsync(parameters);
+            }
         }
 
         private void allFilesFolder_Click(object sender, EventArgs e)
@@ -161,6 +136,118 @@ namespace DynamoParses
         private void button2_Click(object sender, EventArgs e)
         {
             fileList.Items.Clear();
+        }
+
+
+        private void selectDirectory_Click(object sender, EventArgs e)
+        {
+            selectFile.ShowDialog();
+            templateDirectory.Text = selectFile.FileName;
+        }
+
+        private void changeExport_Click(object sender, EventArgs e)
+        {
+            selectFile.ShowDialog();
+            saveTo.Text = selectFile.FileName;
+        }
+
+        private void fileProcessor_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            int i = 0;
+            double currProgress;
+            BackgroundWorker worker = sender as BackgroundWorker;
+            UIParameters parameters = (UIParameters)e.Argument;
+
+            PatientStorage patients = new PatientStorage();
+            List<Header> parsedHeaders = new List<Header>();
+
+            Dictionary<string, bool> staticLaunch = new Dictionary<string, bool>();
+            Dictionary<string, bool> dynamicLaunch = new Dictionary<string, bool>();
+
+            foreach (CheckBox box in parameters.groupBoxStatic.Controls)
+            {
+                staticLaunch.Add(box.Text, box.Checked);
+            }
+            foreach (CheckBox box in parameters.groupBoxDynamic.Controls)
+            {
+                dynamicLaunch.Add(box.Text, box.Checked);
+            }
+            IEnumerable<string> dynamicDirectories = new List<string>();
+            IEnumerable<string> staticDirectories = new List<string>();
+            var lv = parameters.fileList;
+
+
+            dynamicDirectories = from file in lv
+                                 where file.SubItems[2].Text == "Dynamic"
+                                 select file.SubItems[1].Text;
+
+            staticDirectories = from file in lv
+                                where file.SubItems[2].Text == "Static"
+                                select file.SubItems[1].Text;
+
+
+            Export export = new Export(parameters.TemplateDir);
+            foreach (string file in staticDirectories)
+            {
+                currProgress = Convert.ToDouble(((double)++i / (double)(parameters.fileList.Count + 20))* 100);
+                worker.ReportProgress(Convert.ToInt32( Math.Round(currProgress, 0)), "Processing file: " + Path.GetFileName(file));
+                Static staticParser = new Static();
+                staticParser.ParseFiles(file, ref patients, ref parsedHeaders, ref export, staticLaunch);
+                staticParser = null;
+                System.Console.WriteLine(file + " was processed at: " + DateTime.Now);
+            }
+            foreach (string file in dynamicDirectories)
+            {
+                currProgress = Convert.ToDouble(((double)++i / (double)(parameters.fileList.Count + 20)) * 100);
+                worker.ReportProgress(Convert.ToInt32(Math.Round(currProgress, 0)), "Processing file: " + Path.GetFileName(file));
+                Dynamic dynamicParser = new Dynamic();
+                dynamicParser.ParseFiles(file, ref patients, ref parsedHeaders, ref export, dynamicLaunch);
+                dynamicParser = null;
+                System.Console.WriteLine(file + " was processed at: " + DateTime.Now);
+            }
+            currProgress = Convert.ToDouble(((double)(i+10) / (double)(parameters.fileList.Count + 20)) * 100);
+            worker.ReportProgress(Convert.ToInt32(Math.Round(currProgress, 0)), "Saving the file");
+            export.DumpValues<Patient>("Patients", patients.AllPatients);
+            export.DumpValues<Header>("Experiments", parsedHeaders);
+            export.SaveAs(parameters.ExportDir);
+            worker.ReportProgress(95, "Closing the file");
+            export.Close();
+            export = null;
+        }
+
+    
+
+        private void cancelWorker_Click(object sender, EventArgs e)
+        {
+            if (fileProcessor.WorkerSupportsCancellation == true)
+            {
+                // Cancel the asynchronous operation.
+                fileProcessor.CancelAsync();
+            }
+        }
+
+        private void fileProcessor_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled == true)
+            {
+                progressLabel.Text = "Canceled!";
+            }
+            else if (e.Error != null)
+            {
+                progressLabel.Text = "Error: " + e.Error.Message;
+            }
+            else
+            {
+                progressLabel.Text = "Done! File Saved to:" + saveTo.Text;
+            }
+            cancelWorker.Visible = false;
+            fileProgressBar.Visible = false;
+        }
+
+        private void fileProcessor_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressLabel.Text = e.UserState.ToString();
+            fileProgressBar.Value = e.ProgressPercentage;
         }
     }
 }

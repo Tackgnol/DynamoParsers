@@ -13,21 +13,10 @@ namespace DynamoParses.Parsers
 {
     public class Dynamic
     {
-        private static Dynamic instance;
-
-        private Dynamic() { }
-
-        public static Dynamic Instance
+        public Dynamic()
         {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new Dynamic();
-                }
-                return instance;
-            }
         }
+        private MaxForceStorage maxForces = new MaxForceStorage();
         private ParameterStorage parameters = new ParameterStorage();
         private ButterflyParametersStorage butterflyParameters = new ButterflyParametersStorage();
         private OtherPreasureStorage otherPressures = new OtherPreasureStorage();
@@ -36,11 +25,7 @@ namespace DynamoParses.Parsers
         private ForceOverlayStorage forceOverlays = new ForceOverlayStorage();
         private AbstractStorage currentStorage = null;
         private HeaderStorage headers = new HeaderStorage();
-        public List<PressureMeasurement> parsedPreassures = new List<PressureMeasurement>();
-        public List<DynamicParameter> parsedParameters = new List<DynamicParameter>();
-        public List<OtherPreassureMeasurement> parsedOtherPressures = new List<OtherPreassureMeasurement>();
-        public List<ButterflyParameter> parsedButterflyParameters = new List<ButterflyParameter>();
-        public List<ForceOverlay> parsedForceOverlays = new List<ForceOverlay>();
+        private OtherDynamicParameterStorage otherParameters = new OtherDynamicParameterStorage();
         private List<string> overlayCriteria = new List<string>(
                 new string[] {
                     "heel",
@@ -53,59 +38,67 @@ namespace DynamoParses.Parsers
         private string type = "";
         private string measure = "";
 
-        public void ParseFiles(List<string> directories, ref PatientStorage patients, ref List<Header> parsedHeaders)
+        public void ParseFiles(string file, ref PatientStorage patients, ref List<Header> parsedHeaders, ref Export export, Dictionary<string, bool> launch)
         {
-
-
-            foreach (string file in directories)
+            using (var stream = File.OpenRead(file))
+            using (var reader = new StreamReader(stream))
             {
-                using (var stream = File.OpenRead(file))
-                using (var reader = new StreamReader(stream))
+                string line;
+                string mainFlag = "none";
+                while ((line = reader.ReadLine()) != null)
                 {
-                    string line;
-                    string mainFlag = "none";
-                    while ((line = reader.ReadLine()) != null)
+                    Match match = Regex.Match(line, @"\[([^)]*)\]");
+                    if (match.Success)
                     {
-                        Match match = Regex.Match(line, @"\[([^)]*)\]");
-                        if (match.Success)
-                        {
-                            mainFlag = match.Groups[1].Value;
-                            continue;
+                        mainFlag = match.Groups[1].Value;
+                        continue;
 
-                        }
-                        currentStorage = _setupStorage(mainFlag, line);
+                    }
+                    currentStorage = _setupStorage(mainFlag, line);
 
-                        if (currentStorage != null)
-                        {
-                            currentStorage.AddElement(currentStorage.AdditionalInfo + line);
-                        }
+                    if (currentStorage != null)
+                    {
+                        currentStorage.AddElement(currentStorage.AdditionalInfo + line);
                     }
                 }
-
-                Header currentExperiment = headers.ParseElements(patients);
-                parsedHeaders.Add(currentExperiment);
-                parsedPreassures.AddRange(preassureMeasurements.ParseElements(currentExperiment));
-                parsedParameters.AddRange(parameters.ParseElements(currentExperiment));
-                parsedButterflyParameters.AddRange(butterflyParameters.ParseElements(currentExperiment));
-                parsedOtherPressures.AddRange(otherPressures.ParseElements(currentExperiment));
-                parsedForceOverlays.AddRange(forceOverlays.ParseElements(currentExperiment));
-                //Export export = new Export(@"c:\temp\Data_Test_Final.xlsx");
-                //export.DumpValues("Preassures", parsedPreassures);
-                //export.DumpValues("DynamicParameters", parsedParameters);
-                //export.DumpValues("ButterflyParameters", parsedButterflyParameters);
-                //export.DumpValues("OtherPreassures", parsedOtherPressures);
-                //export.DumpValues("ForceOverlays", parsedForceOverlays);
-                //parsedPreassures.Clear();
-                //parsedParameters.Clear();
-                //parsedButterflyParameters.Clear();
-                //parsedOtherPressures.Clear();
-                //parsedForceOverlays.Clear();
-                //export.Save();
-                //export.Close();
-                //export = null;
-
             }
+
+            Header currentExperiment = headers.ParseElements(patients);
+            parsedHeaders.Add(currentExperiment);
+            if (launch["Preassures"])
+            {
+                export.DumpValues("Preassures", preassureMeasurements.ParseElements(currentExperiment));
+            }
+            if (launch["Butterfly Parameters"])
+            {
+                export.DumpValues("ButterflyParameters", butterflyParameters.ParseElements(currentExperiment));
+            }
+            if (launch["Other Preassures"])
+            {
+                export.DumpValues("OtherPreassures", otherPressures.ParseElements(currentExperiment));
+            }
+            if (launch["Parameters"])
+            {
+                export.DumpValues("DynamicParameters", parameters.ParseElements(currentExperiment));
+            }
+            if (launch["Force Overlays"])
+            {
+                export.DumpValues("ForceOverlays", forceOverlays.ParseElements(currentExperiment));
+            }
+            if (launch["Max Forces"])
+            {
+                export.DumpValues("MaxForces", maxForces.ParseElements(currentExperiment));
+            }
+            if (launch["Other Parameters"])
+            {
+                export.DumpValues("OtherDynamicParameters", otherParameters.ParseElements(currentExperiment));
+            }
+
+
+
+
         }
+
 
         private string _forceOverlayInfo(string foot, List<string> cryteriaList, string line, string oldValue)
         {
@@ -198,12 +191,13 @@ namespace DynamoParses.Parsers
                         type = "max pressure";
                         currentStorage = otherPressures;
                     }
-                    if (line.Contains("force") && !line.Contains("Signal"))
+                    if (line.Contains("force") && !line.Contains("Signal") && !line.Contains("Max"))
                     {
                         foot = line.Split(' ')[0];
                         type = "force";
                         currentStorage = otherPressures;
                     }
+
                     if (type == "max pressure" || type == "force")
                     {
                         if (line == "Time, %\t Value, \t SD, ")
@@ -214,6 +208,24 @@ namespace DynamoParses.Parsers
                         {
                             measure = "Measurement 2";
                         }
+                    }
+                    if (Regex.IsMatch(line, @"(Max force \d)+"))
+                    {
+                        currentStorage = maxForces;
+                    }
+
+                    if (otherParameters.OtherParameterHeaders.ContainsKey(line))
+                    {
+                        currentStorage = otherParameters;
+                        List<string> tempList = (otherParameters.OtherParameterHeaders[line]).Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        foot = tempList[0];
+                        type = tempList[1];
+                        measure = null;
+                    }
+                    if (line.Contains("Time change heel to forefoot"))
+                    {
+                        currentStorage = otherParameters;
+                        foot = type = measure = null;
                     }
                     currentStorage.AdditionalInfo = foot + ", " + type + ", " + measure + ", ";
                     break;

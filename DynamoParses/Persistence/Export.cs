@@ -28,8 +28,7 @@ namespace DynamoParses.Persistence
             }
             catch
             {
-                Main form = new Main();
-                form.AddToLog("Failed to Export to Excel max rows exceeded");
+
 
             }
         }
@@ -45,6 +44,11 @@ namespace DynamoParses.Persistence
         public void Save()
         {
             xlPackage.Save();
+        }
+        public void SaveAs(string directory)
+        {
+            newFile = new FileInfo(directory);
+            xlPackage.SaveAs(newFile);
         }
 
         public void Close()
