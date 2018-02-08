@@ -38,8 +38,9 @@ namespace DynamoParses.Parsers
         private string type = "";
         private string measure = "";
 
-        public void ParseFiles(string file, ref PatientStorage patients, ref List<Header> parsedHeaders, ref Export export, Dictionary<string, bool> launch)
+        public void ParseFiles(string file, PatientStorage patients, ref List<StudyHeader> parsedHeaders, ref Export export, Dictionary<string, bool> launch)
         {
+            headers.fileName = Path.GetFileNameWithoutExtension(file);
             using (var stream = File.OpenRead(file))
             using (var reader = new StreamReader(stream))
             {
@@ -63,7 +64,8 @@ namespace DynamoParses.Parsers
                 }
             }
 
-            Header currentExperiment = headers.ParseElements(patients);
+            StudyHeader currentExperiment = headers.ParseElements(patients);
+            currentExperiment.TryParseFileNameArray();
             parsedHeaders.Add(currentExperiment);
             if (launch["Preassures"])
             {
@@ -93,10 +95,6 @@ namespace DynamoParses.Parsers
             {
                 export.DumpValues("OtherDynamicParameters", otherParameters.ParseElements(currentExperiment));
             }
-
-
-
-
         }
 
 
@@ -236,6 +234,7 @@ namespace DynamoParses.Parsers
 
             return currentStorage;
         }
+
     }
 }
 

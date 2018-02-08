@@ -13,7 +13,7 @@ namespace DynamoParses.StoregeUnits
     {
 
         public HeaderStorage() : base() { }
-
+        public string fileName { get; set; }
         override protected bool _validateLine(string element)
         {
             if (element.Length >= 1)
@@ -24,7 +24,7 @@ namespace DynamoParses.StoregeUnits
         }
 
 
-        public Header ParseElements(PatientStorage patients)
+        public StudyHeader ParseElements(PatientStorage patients)
         {
             string firstName, lastName, title, sex;
             Patient currentPatient;
@@ -60,7 +60,9 @@ namespace DynamoParses.StoregeUnits
             Match titleMatch = Regex.Match(titleLine.First().ToString(), "(?<=..-..-....)(.*)(?=../../....)");
             title = titleMatch.Groups[0].Value.Trim();
             _elements = new List<string>();
-            return new Header(currentPatient, expirementDate, title);
+            var fileArray = fileName.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+
+            return new StudyHeader(currentPatient, expirementDate, title, fileArray);
 
         }
 

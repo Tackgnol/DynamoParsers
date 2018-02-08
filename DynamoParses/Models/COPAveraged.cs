@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DynamoParses.Models
 {
-    public class COPAveraged
+    public class COPAveraged : AbstractModel
     {
         public int ExperimentId { get; set; }
         public int PatientId { get; set; }
@@ -16,7 +16,7 @@ namespace DynamoParses.Models
         public double X { get; set; }
         public double Y { get; set; }
 
-        public COPAveraged(string side, string bodyPart, string unit, double x, double y,  Header experiment)
+        public COPAveraged(string side, string bodyPart, string unit, double x, double y,  StudyHeader experiment)
         {
             Side = side;
             BodyPart = bodyPart;
@@ -25,7 +25,7 @@ namespace DynamoParses.Models
             Y = y;
             PatientId = experiment.PersonId;
             ExperimentId = experiment.Id;
-
+            FillExperimentData(experiment);
         }
 
     }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.SplitBy = new System.Windows.Forms.TabPage();
             this.UsePatterns = new System.Windows.Forms.CheckBox();
             this.PatternStorage = new System.Windows.Forms.DataGridView();
@@ -46,13 +47,14 @@
             this.label1 = new System.Windows.Forms.Label();
             this.fileList = new System.Windows.Forms.ListView();
             this.del = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Direcotory = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.fileDirecotory = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.FileType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBoxCommon = new System.Windows.Forms.GroupBox();
             this.checkBoxExperiments = new System.Windows.Forms.CheckBox();
             this.checkBoxPatients = new System.Windows.Forms.CheckBox();
             this.groupBoxDynamic = new System.Windows.Forms.GroupBox();
+            this.otherParametes = new System.Windows.Forms.CheckBox();
             this.maxForces = new System.Windows.Forms.CheckBox();
             this.ForceOverlays = new System.Windows.Forms.CheckBox();
             this.checkBoxDynamicParameters = new System.Windows.Forms.CheckBox();
@@ -78,7 +80,6 @@
             this.deleteButtons = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.selectFile = new System.Windows.Forms.OpenFileDialog();
             this.fileProcessor = new System.ComponentModel.BackgroundWorker();
-            this.otherParametes = new System.Windows.Forms.CheckBox();
             this.SplitBy.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PatternStorage)).BeginInit();
             this.mainMenu.SuspendLayout();
@@ -267,7 +268,7 @@
             // 
             this.fileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.del,
-            this.Direcotory,
+            this.fileDirecotory,
             this.FileType});
             this.fileList.Location = new System.Drawing.Point(15, 47);
             this.fileList.Name = "fileList";
@@ -281,10 +282,10 @@
             this.del.Text = "Del";
             this.del.Width = 29;
             // 
-            // Direcotory
+            // fileDirecotory
             // 
-            this.Direcotory.Text = "Directory";
-            this.Direcotory.Width = 757;
+            this.fileDirecotory.Text = "File Directory";
+            this.fileDirecotory.Width = 757;
             // 
             // FileType
             // 
@@ -362,6 +363,19 @@
             this.groupBoxDynamic.TabIndex = 8;
             this.groupBoxDynamic.TabStop = false;
             this.groupBoxDynamic.Text = "Dynamic";
+            // 
+            // otherParametes
+            // 
+            this.otherParametes.AutoSize = true;
+            this.otherParametes.Checked = true;
+            this.otherParametes.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.otherParametes.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.otherParametes.Location = new System.Drawing.Point(6, 187);
+            this.otherParametes.Name = "otherParametes";
+            this.otherParametes.Size = new System.Drawing.Size(187, 22);
+            this.otherParametes.TabIndex = 10;
+            this.otherParametes.Text = "Other Parameters";
+            this.otherParametes.UseVisualStyleBackColor = true;
             // 
             // maxForces
             // 
@@ -610,24 +624,13 @@
             this.fileProcessor.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.fileProcessor_ProgressChanged);
             this.fileProcessor.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.fileProcessor_RunWorkerCompleted);
             // 
-            // otherParametes
-            // 
-            this.otherParametes.AutoSize = true;
-            this.otherParametes.Checked = true;
-            this.otherParametes.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.otherParametes.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.otherParametes.Location = new System.Drawing.Point(6, 187);
-            this.otherParametes.Name = "otherParametes";
-            this.otherParametes.Size = new System.Drawing.Size(187, 22);
-            this.otherParametes.TabIndex = 10;
-            this.otherParametes.Text = "Other Parameters";
-            this.otherParametes.UseVisualStyleBackColor = true;
-            // 
             // Main
             // 
             this.ClientSize = new System.Drawing.Size(1095, 506);
             this.Controls.Add(this.mainMenu);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Main";
+            this.Text = "Zebris Output Parser";
             this.SplitBy.ResumeLayout(false);
             this.SplitBy.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PatternStorage)).EndInit();
@@ -674,7 +677,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.OpenFileDialog selectFile;
         private System.Windows.Forms.ColumnHeader del;
-        private System.Windows.Forms.ColumnHeader Direcotory;
+        private System.Windows.Forms.ColumnHeader fileDirecotory;
         private System.Windows.Forms.ColumnHeader FileType;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox saveTo;

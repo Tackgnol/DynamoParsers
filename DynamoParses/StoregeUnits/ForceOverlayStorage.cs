@@ -1,6 +1,7 @@
 ﻿using DynamoParses.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace DynamoParses.StoregeUnits
     {
         public ForceOverlayStorage() : base(){ }
 
-        public List<ForceOverlay> ParseElements(Header experiment)
+        public List<ForceOverlay> ParseElements(StudyHeader experiment)
         {
             List<ForceOverlay> forceOverlays = new List<ForceOverlay>();
             Dictionary<string, string> parsedValues = new Dictionary<string, string>();
@@ -30,8 +31,8 @@ namespace DynamoParses.StoregeUnits
                         parsedValues["Title"],
                         parsedValues["Side"],
                         parsedValues["BodyPart"],
-                        Convert.ToInt32(array[0]),
-                        Convert.ToDouble(array[1]),
+                        Convert.ToInt32(array[0], CultureInfo.InvariantCulture),
+                        Convert.ToDouble(array[1], CultureInfo.InvariantCulture),
                         experiment
                         )
                     );

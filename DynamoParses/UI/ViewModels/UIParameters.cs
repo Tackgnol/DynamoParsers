@@ -15,7 +15,7 @@ namespace DynamoParses.UI.ViewModels
         public string TemplateDir { get; set; }
         public string ExportDir { get; set; }
         public List<ListViewItem> fileList { get; set; }
-
+        public bool DownloadDetails { get; set; }
         public UIParameters() { }
     }
 }

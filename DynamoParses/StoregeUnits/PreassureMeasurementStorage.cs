@@ -1,6 +1,7 @@
 ﻿using DynamoParses.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace DynamoParses.StoregeUnits
     {
         public PreassureMeasurementStorage() : base() { }
 
-        public List<PressureMeasurement> ParseElements(Header experiment)
+        public List<PressureMeasurement> ParseElements(StudyHeader experiment)
         {
             string foot;
             double force, X, Y;
@@ -32,9 +33,9 @@ namespace DynamoParses.StoregeUnits
                     array[i] = array[i].Replace(',', '.');
                 }
 
-                force = Convert.ToDouble(array[0]);
-                X = Convert.ToDouble(array[1]);
-                Y = Convert.ToDouble(array[2]);
+                force = Convert.ToDouble(array[0], CultureInfo.InvariantCulture);
+                X = Convert.ToDouble(array[1], CultureInfo.InvariantCulture);
+                Y = Convert.ToDouble(array[2], CultureInfo.InvariantCulture);
                 measurements.Add(new PressureMeasurement(foot, force, X, Y, experiment));
             }
             _elements = new List<string>();

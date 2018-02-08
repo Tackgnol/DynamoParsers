@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DynamoParses.Models
 {
-    public class ForceOverlay
+    public class ForceOverlay : AbstractModel
     {
         public int PatientId { get; set; }
         public int ExperimentId { get; set; }
@@ -17,7 +17,7 @@ namespace DynamoParses.Models
         public double Value { get; set; }
         public int Time { get; set; }
 
-        public ForceOverlay(string title, string side, string bodyPart, int time, double value, Header experiment)
+        public ForceOverlay(string title, string side, string bodyPart, int time, double value, StudyHeader experiment)
         {
             BodyPart = bodyPart;
             Side = side;
@@ -26,6 +26,7 @@ namespace DynamoParses.Models
             Value = value;
             PatientId = experiment.Person.Id;
             ExperimentId = experiment.Id;
+            FillExperimentData(experiment);
         }
     }
 }

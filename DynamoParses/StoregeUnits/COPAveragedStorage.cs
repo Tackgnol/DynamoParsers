@@ -1,6 +1,7 @@
 ﻿using DynamoParses.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,7 +14,7 @@ namespace DynamoParses.StoregeUnits
     {
         public COPAveragedStorage() : base() { }
 
-        public List<COPAveraged> ParseElements(Header experiment)
+        public List<COPAveraged> ParseElements(StudyHeader experiment)
         {
             List<COPAveraged> COPAverages = new List<COPAveraged>();
             Dictionary<string, string> valueDictionary = new Dictionary<string, string>();
@@ -32,8 +33,8 @@ namespace DynamoParses.StoregeUnits
                         valueDictionary["Side"],
                         valueDictionary["BodyPart"],
                         valueDictionary["Unit"],
-                        Convert.ToDouble(valuesArray[0]),
-                        Convert.ToDouble(valuesArray[1]),
+                        double.Parse(valuesArray[0],CultureInfo.InvariantCulture),
+                        double.Parse(valuesArray[1], CultureInfo.InvariantCulture),
                         experiment
                         )
                     );

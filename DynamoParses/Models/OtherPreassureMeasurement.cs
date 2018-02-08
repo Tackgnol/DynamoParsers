@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DynamoParses.Models
 {
-    public class OtherPreassureMeasurement
+    public class OtherPreassureMeasurement : AbstractModel
     {
         public int ExperimentId { get; set; }
         public int PatientId { get; set; }
@@ -17,7 +17,7 @@ namespace DynamoParses.Models
         public double Value { get; set; }
         public double? SD { get; set; }
 
-        public OtherPreassureMeasurement(string bodypart, string title, string measurement, int time, double value, double? sd, Header experiment)
+        public OtherPreassureMeasurement(string bodypart, string title, string measurement, int time, double value, double? sd, StudyHeader experiment)
         {
             Bodypart = bodypart;
             Time = time;
@@ -27,6 +27,7 @@ namespace DynamoParses.Models
             Measurement = measurement;
             ExperimentId = experiment.Id;
             PatientId = experiment.Person.Id;
+            FillExperimentData(experiment);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace DynamoParses.StoregeUnits
     {
         public ButterflyParametersStorage() : base(){ }
 
-        public List<ButterflyParameter> ParseElements(Header experiment)
+        public List<ButterflyParameter> ParseElements(StudyHeader experiment)
         {
             Dictionary<string, string> parsedStrings = new Dictionary<string, string>();
             string[] array;

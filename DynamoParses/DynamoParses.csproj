@@ -24,14 +24,14 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationRevision>13</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -39,6 +39,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>1</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -93,13 +94,14 @@
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\AbstractModel.cs" />
     <Compile Include="Models\ButterflyParameter.cs" />
     <Compile Include="Models\ContactTime.cs" />
     <Compile Include="Models\COPAveraged.cs" />
     <Compile Include="Models\COPTrack.cs" />
     <Compile Include="Models\DynamicParameter.cs" />
     <Compile Include="Models\ForceOverlay.cs" />
-    <Compile Include="Models\Header.cs" />
+    <Compile Include="Models\StudyHeader.cs" />
     <Compile Include="Models\MaxForce.cs" />
     <Compile Include="Models\OtherDynamicParameter.cs" />
     <Compile Include="Models\OtherPreassureMeasurement.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="Models\Patient.cs" />
     <Compile Include="Models\PressureMeasurement.cs" />
     <Compile Include="Models\SideForce.cs" />
+    <Compile Include="Parsers\ParserParent.cs" />
     <Compile Include="Parsers\Static.cs" />
     <Compile Include="Parsers\Dynamic.cs" />
     <Compile Include="Persistence\Export.cs" />

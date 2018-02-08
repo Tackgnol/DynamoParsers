@@ -51,7 +51,7 @@ namespace DynamoParses.UI.ViewModels
             return new[] {"X", Directory, Parser.ToString() };
         }
 
-        public async void GetType()
+        public void GetType()
         {
 
             // first easy pass

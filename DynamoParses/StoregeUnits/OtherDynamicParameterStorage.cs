@@ -1,6 +1,7 @@
 ﻿using DynamoParses.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace DynamoParses.StoregeUnits
             };
 
         public OtherDynamicParameterStorage() : base() { }
-        public List<OtherDynamicParameter> ParseElements(Header experiment)
+        public List<OtherDynamicParameter> ParseElements(StudyHeader experiment)
         {
             List<OtherDynamicParameter> otherDynamicParamaters = new List<OtherDynamicParameter>();
             List<string> array = new List<string>();
@@ -33,8 +34,8 @@ namespace DynamoParses.StoregeUnits
                 {
                     array[i] = array[i].Replace(',', '.');
                 }
-                X = Convert.ToDouble(array[0]);
-                Y = Convert.ToDouble(array[1]);
+                X = Convert.ToDouble(array[0], CultureInfo.InvariantCulture);
+                Y = Convert.ToDouble(array[1], CultureInfo.InvariantCulture);
 
                 otherDynamicParamaters.Add(
                     new OtherDynamicParameter(

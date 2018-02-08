@@ -22,5 +22,10 @@ namespace DynamoParses.Models
             Sex = sex;
         }
 
+        public string FullName()
+        {
+            return FirstName + " " + LastName;
+        }
+
     }
 }

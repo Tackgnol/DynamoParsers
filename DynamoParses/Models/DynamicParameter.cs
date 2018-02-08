@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DynamoParses.Models
 {
-    public class DynamicParameter 
+    public class DynamicParameter : AbstractModel
     {
         public int ExperimentId { get; set; }
         public int PatientId { get; set; }
@@ -17,7 +17,7 @@ namespace DynamoParses.Models
         public double X { get; set; }
         public double Y { get; set; }
 
-        public DynamicParameter(string title, string unit, string side, double x, double y, Header experiment)
+        public DynamicParameter(string title, string unit, string side, double x, double y, StudyHeader experiment)
         {
             Title = title;
             Unit = unit;
@@ -26,6 +26,7 @@ namespace DynamoParses.Models
             Y = y;
             ExperimentId = experiment.Id;
             PatientId = experiment.Person.Id;
+            FillExperimentData(experiment);
         }
     }
 }

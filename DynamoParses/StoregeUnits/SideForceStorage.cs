@@ -1,6 +1,7 @@
 ﻿using DynamoParses.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace DynamoParses.StoregeUnits
             return false;
         }
 
-        public List<SideForce> ParseElements(Header expriment)
+        public List<SideForce> ParseElements(StudyHeader expriment)
         {
             List<SideForce> parsedSideForces =  new List<SideForce>();
             Dictionary<string, string> valueDictionary = new Dictionary<string, string>();
@@ -36,7 +37,7 @@ namespace DynamoParses.StoregeUnits
                     valueArray[i] = valueArray[i].Trim();
                     valueArray[i] = valueArray[i].Replace(',', '.');
                 }
-                List<double> valueList = valueArray.Select(double.Parse).ToList();
+                List<double> valueList = valueArray.Select(x => double.Parse(x, CultureInfo.InvariantCulture)).ToList();
                 parsedSideForces.Add(
                         new SideForce(
                             valueDictionary["Side"],

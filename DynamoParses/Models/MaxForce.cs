@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DynamoParses.Models
 {
-    class MaxForce
+    class MaxForce : AbstractModel
     {
         public int ExperimentId { get; set; }
         public int PatientId { get; set; }
@@ -16,7 +16,7 @@ namespace DynamoParses.Models
 
         public double Value { get; set; }
 
-        public MaxForce(string title, string unit, string side, double value, Header experiment)
+        public MaxForce(string title, string unit, string side, double value, StudyHeader experiment)
         {
             Title = title;
             Unit = unit;
@@ -24,6 +24,7 @@ namespace DynamoParses.Models
             Value = value;
             ExperimentId = experiment.Id;
             PatientId = experiment.Person.Id;
+            FillExperimentData(experiment);
         }
     }
 }

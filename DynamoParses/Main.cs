@@ -35,6 +35,7 @@ namespace DynamoParses
             extender.AddColumn(buttonDelete);
             errorList = new List<string>();
             saveTo.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\" + DateTime.Today.ToString("D") + " Export.xlsx";
+
         }
 
 
@@ -96,8 +97,14 @@ namespace DynamoParses
                 parameters.groupBoxCommon = groupBoxCommon;
                 parameters.fileList = fileList.Items.Cast<ListViewItem>().ToList();
                 parameters.ExportDir = saveTo.Text;
-                parameters.TemplateDir = templateDirectory.Text;
+                if (templateDirectory.Text == "")
+                {
+                    selectFile.Title = "No Template selected please select one!";
+                    selectFile.ShowDialog();
+                    templateDirectory.Text = selectFile.FileName;     
+                }
 
+                parameters.TemplateDir = templateDirectory.Text;
                 fileProcessor.RunWorkerAsync(parameters);
             }
         }
@@ -106,26 +113,35 @@ namespace DynamoParses
         {
             selectFolder.ShowDialog();
             DirectoryInfo dinfo = new DirectoryInfo(selectFolder.SelectedPath);
-
-            FileInfo[] Files = dinfo.GetFiles("*.txt", SearchOption.AllDirectories);
-            files = new List<DynamoFile>();
-            foreach (FileInfo directory in Files)
+            try
             {
-                DynamoFile thisFile = new DynamoFile(directory.FullName);
-                thisFile.GetType();
-                files.Add(
-                    thisFile
-                    );
+                FileInfo[] Files = dinfo.GetFiles("*.txt", SearchOption.AllDirectories);
+                if (!Files.Any())
+                    return;
+                files = new List<DynamoFile>();
+                foreach (FileInfo directory in Files)
+                {
+                    DynamoFile thisFile = new DynamoFile(directory.FullName);
+                    thisFile.GetType();
+                    files.Add(
+                        thisFile
+                        );
+                }
+                foreach (DynamoFile file in files)
+                {
+                    ListViewItem item = new ListViewItem(file.ReturnItem());
+
+                    fileList.Items.Add((
+                        item
+                        ));
+
+                }
             }
-            foreach (DynamoFile file in files)
+            catch (Exception ex)
             {
-                ListViewItem item = new ListViewItem(file.ReturnItem());
-
-                fileList.Items.Add((
-                    item
-                    ));
-
+                Console.WriteLine(ex);
             }
+
 
         }
         private void UsePatterns_CheckedChanged(object sender, EventArgs e)
@@ -142,24 +158,27 @@ namespace DynamoParses
         private void selectDirectory_Click(object sender, EventArgs e)
         {
             selectFile.ShowDialog();
+            if (selectFile.FileName == null)
+                return;
             templateDirectory.Text = selectFile.FileName;
         }
 
         private void changeExport_Click(object sender, EventArgs e)
         {
             selectFile.ShowDialog();
+            if (selectFile.FileName == null)
+                return;
             saveTo.Text = selectFile.FileName;
         }
 
         private void fileProcessor_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            int i = 0;
+
             double currProgress;
             BackgroundWorker worker = sender as BackgroundWorker;
             UIParameters parameters = (UIParameters)e.Argument;
 
-            PatientStorage patients = new PatientStorage();
-            List<Header> parsedHeaders = new List<Header>();
+
 
             Dictionary<string, bool> staticLaunch = new Dictionary<string, bool>();
             Dictionary<string, bool> dynamicLaunch = new Dictionary<string, bool>();
@@ -172,47 +191,18 @@ namespace DynamoParses
             {
                 dynamicLaunch.Add(box.Text, box.Checked);
             }
-            IEnumerable<string> dynamicDirectories = new List<string>();
-            IEnumerable<string> staticDirectories = new List<string>();
-            var lv = parameters.fileList;
-
-
-            dynamicDirectories = from file in lv
-                                 where file.SubItems[2].Text == "Dynamic"
-                                 select file.SubItems[1].Text;
-
-            staticDirectories = from file in lv
-                                where file.SubItems[2].Text == "Static"
-                                select file.SubItems[1].Text;
-
-
-            Export export = new Export(parameters.TemplateDir);
-            foreach (string file in staticDirectories)
+            ParserParent parserClass = new ParserParent(worker);
+            parserClass.dynamicLaunch = dynamicLaunch;
+            parserClass.staticLaunch = staticLaunch;
+            parserClass.parameters = parameters;
+            if (UsePatterns.Checked)
             {
-                currProgress = Convert.ToDouble(((double)++i / (double)(parameters.fileList.Count + 20))* 100);
-                worker.ReportProgress(Convert.ToInt32( Math.Round(currProgress, 0)), "Processing file: " + Path.GetFileName(file));
-                Static staticParser = new Static();
-                staticParser.ParseFiles(file, ref patients, ref parsedHeaders, ref export, staticLaunch);
-                staticParser = null;
-                System.Console.WriteLine(file + " was processed at: " + DateTime.Now);
+                parserClass.SplitFiles(PatternStorage);
             }
-            foreach (string file in dynamicDirectories)
+            else
             {
-                currProgress = Convert.ToDouble(((double)++i / (double)(parameters.fileList.Count + 20)) * 100);
-                worker.ReportProgress(Convert.ToInt32(Math.Round(currProgress, 0)), "Processing file: " + Path.GetFileName(file));
-                Dynamic dynamicParser = new Dynamic();
-                dynamicParser.ParseFiles(file, ref patients, ref parsedHeaders, ref export, dynamicLaunch);
-                dynamicParser = null;
-                System.Console.WriteLine(file + " was processed at: " + DateTime.Now);
+                parserClass.InOneGo();
             }
-            currProgress = Convert.ToDouble(((double)(i+10) / (double)(parameters.fileList.Count + 20)) * 100);
-            worker.ReportProgress(Convert.ToInt32(Math.Round(currProgress, 0)), "Saving the file");
-            export.DumpValues<Patient>("Patients", patients.AllPatients);
-            export.DumpValues<Header>("Experiments", parsedHeaders);
-            export.SaveAs(parameters.ExportDir);
-            worker.ReportProgress(95, "Closing the file");
-            export.Close();
-            export = null;
         }
 
     
@@ -249,5 +239,6 @@ namespace DynamoParses
             progressLabel.Text = e.UserState.ToString();
             fileProgressBar.Value = e.ProgressPercentage;
         }
+
     }
 }

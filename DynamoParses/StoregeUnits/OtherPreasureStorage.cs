@@ -1,6 +1,7 @@
 ﻿using DynamoParses.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace DynamoParses.StoregeUnits
     {
         public OtherPreasureStorage() : base(){ }
 
-        public List<OtherPreassureMeasurement> ParseElements(Header experiment)
+        public List<OtherPreassureMeasurement> ParseElements(StudyHeader experiment)
         {
             string[] valueArray;
             double? sd;
@@ -28,7 +29,7 @@ namespace DynamoParses.StoregeUnits
                 }
                 if (valueArray.Count() == 3)
                 {
-                    sd = Convert.ToDouble(valueArray[2]);
+                    sd = Convert.ToDouble(valueArray[2], CultureInfo.InvariantCulture);
                 } else {
                     sd = null;
                 }
@@ -37,8 +38,8 @@ namespace DynamoParses.StoregeUnits
                             parsedValues["Side"],
                             parsedValues["Title"],
                             parsedValues["Measurement"],
-                            Convert.ToInt32(valueArray[0]),
-                            Convert.ToDouble(valueArray[1]),
+                            Convert.ToInt32(valueArray[0], CultureInfo.InvariantCulture),
+                            Convert.ToDouble(valueArray[1], CultureInfo.InvariantCulture),
                             sd, experiment
                         )
                     );

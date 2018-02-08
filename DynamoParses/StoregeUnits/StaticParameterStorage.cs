@@ -1,6 +1,7 @@
 ﻿using DynamoParses.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace DynamoParses.StoregeUnits
             return false;
         }
 
-        public List<StaticParameter> ParseElements(Header experiment)
+        public List<StaticParameter> ParseElements(StudyHeader experiment)
         {
             List<StaticParameter> parsedParameters = new List<StaticParameter>();
             Dictionary<string, string> valueDictionary = new Dictionary<string, string>();
@@ -41,7 +42,7 @@ namespace DynamoParses.StoregeUnits
                                 valueDictionary["Title"],
                                 valueArray[0],
                                 side,
-                                Convert.ToDouble(valueArray[1]),
+                                Convert.ToDouble(valueArray[1], CultureInfo.InvariantCulture),
                                 experiment
                             )   
                     );

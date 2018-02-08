@@ -1,6 +1,7 @@
 ﻿using DynamoParses.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace DynamoParses.StoregeUnits
     {
         public COPTrackStorage() : base() { }
 
-        public List<COPTrack> ParseElements(Header expriment)
+        public List<COPTrack> ParseElements(StudyHeader expriment)
         {
             List<COPTrack> parsedCOPTracks = new List<COPTrack>();
             Dictionary<string, string> valueDictionary = new Dictionary<string, string>();
@@ -24,7 +25,7 @@ namespace DynamoParses.StoregeUnits
                     valueArray[i] = valueArray[i].Trim();
                     valueArray[i] = valueArray[i].Replace(',', '.');
                 }
-                List<double> valueList = valueArray.Select(double.Parse).ToList();
+                List<double> valueList = valueArray.Select(x => double.Parse(x, CultureInfo.InvariantCulture)).ToList();
                 parsedCOPTracks.Add(
                         new COPTrack(
                             valueDictionary["Side"],

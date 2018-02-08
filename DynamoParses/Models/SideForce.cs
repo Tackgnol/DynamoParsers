@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DynamoParses.Models
 {
-    public class SideForce
+    public class SideForce : AbstractModel
     {
         public int PatientId { get; set; }
         public int ExperimentId { get; set; }
@@ -16,7 +16,7 @@ namespace DynamoParses.Models
         public double Value { get; set; }
 
 
-        public SideForce(string side, string bodyPart, double time, double value, Header experiment)
+        public SideForce(string side, string bodyPart, double time, double value, StudyHeader experiment)
         {
             Side = side;
             BodyPart = bodyPart;
@@ -24,6 +24,7 @@ namespace DynamoParses.Models
             Value = value;
             PatientId = experiment.PersonId;
             ExperimentId = experiment.Id;
+            FillExperimentData(experiment);
         }
     }
 }

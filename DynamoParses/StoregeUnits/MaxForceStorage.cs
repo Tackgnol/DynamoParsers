@@ -1,6 +1,7 @@
 ﻿using DynamoParses.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace DynamoParses.StoregeUnits
     {
         public MaxForceStorage() : base(){ }
 
-        public List<MaxForce> ParseElements(Header experiment)
+        public List<MaxForce> ParseElements(StudyHeader experiment)
         {
 
             Dictionary<string, string> parsedStrings = new Dictionary<string, string>();
@@ -21,7 +22,7 @@ namespace DynamoParses.StoregeUnits
             foreach (string element in _elements)
             {
                 parsedStrings = _getValueDict(element);
-                double value = Convert.ToDouble(parsedStrings["RemainingValues"].Replace(',', '.'));
+                double value = Convert.ToDouble(parsedStrings["RemainingValues"].Replace(',', '.'), CultureInfo.InvariantCulture);
                 paramameters.Add(
                     new MaxForce(
                         parsedStrings["Title"],

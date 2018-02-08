@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DynamoParses.Models
 {
-    public class ButterflyParameter
+    public class ButterflyParameter : AbstractModel
     {
         public int ExperimentId { get; set; }
         public int PatientId { get; set; }
@@ -15,7 +15,7 @@ namespace DynamoParses.Models
         public string Side { get; set; }
         public double Value { get; set; }
 
-        public ButterflyParameter(string name, string unit,string side, double value, Header experiment)
+        public ButterflyParameter(string name, string unit,string side, double value, StudyHeader experiment)
         {
             Title = name;
             Unit = unit;
@@ -23,6 +23,7 @@ namespace DynamoParses.Models
             Side = side;
             ExperimentId = experiment.Id;
             PatientId = experiment.Person.Id;
+            FillExperimentData(experiment);
         }
     }
 }
