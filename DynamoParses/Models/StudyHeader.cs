@@ -57,25 +57,42 @@ namespace DynamoParses.Models
             try
             {
 
-                if (_fileNameArray[2] == "oo")
+                if (_fileNameArray[1] == "S")
                 {
-                    Eyes = true;
-                }
-                else if (_fileNameArray[2] == "oz")
-                {
-                    Eyes = false;
-                }
-                if (_fileNameArray[3] == "b")
-                {
-                    Shoes = true;
-                }
-                else if (_fileNameArray[3] == "bb")
-                {
-                    Shoes = false;
-                }
-                TrialNo = _fileNameArray[4];
-                RepeatNo = _fileNameArray[5];
 
+                    if (_fileNameArray[2] == "oo")
+                    {
+                        Eyes = true;
+                    }
+                    else if (_fileNameArray[2] == "oz")
+                    {
+                        Eyes = false;
+                    }
+                    if (_fileNameArray[3] == "b")
+                    {
+                        Shoes = true;
+                    }
+                    else if (_fileNameArray[3] == "bb")
+                    {
+                        Shoes = false;
+                    }
+                    TrialNo = _fileNameArray[4];
+                    RepeatNo = _fileNameArray[5];
+
+                }
+                else if (_fileNameArray[1] == "D")
+                {
+                    if (_fileNameArray[2] == "b")
+                    {
+                        Shoes = true;
+                    }
+                    else if (_fileNameArray[2] == "bb")
+                    {
+                        Shoes = false;
+                    }
+                    TrialNo = _fileNameArray[3];
+                    RepeatNo = _fileNameArray[4];
+                }
             }
             catch (Exception ex)
             {
