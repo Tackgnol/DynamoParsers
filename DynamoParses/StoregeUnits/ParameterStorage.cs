@@ -72,12 +72,24 @@ namespace DynamoParses.StoregeUnits
                 array.RemoveAt(0);
                 parameterValues["Side"] = array[0].Split('\t')[0];
                 array[0] = array[0].Split('\t')[1];
+                parameterValues["RemainingValues"] = string.Join(",", array);
             } else {
-                parameterValues["Side"] = "NA";
-                parameterValues["Unit"] = array[0].Split('\t')[0];
-                array[0] = array[0].Split('\t')[1];
+
+                if (array[0].Split('\t').Length > 1)
+                {
+                    parameterValues["Side"] = "NA";
+                    parameterValues["Unit"] = array[0].Split('\t')[0];
+                    array[0] = array[0].Split('\t')[1];
+                    parameterValues["RemainingValues"] = string.Join(",", array);
+                } else
+                {
+                    parameterValues["Unit"] = array[0].Trim();
+                    array.RemoveAt(0);
+                    parameterValues["Side"] = array[0].Split('\t')[0];
+                    parameterValues["RemainingValues"] =array[0].Split('\t')[1].ToString() + '\t' + array[1].ToString();
+                }
             }
-            parameterValues["RemainingValues"] = string.Join(",", array);
+            
 
             return parameterValues;
         }
